@@ -19,6 +19,6 @@ func main() {
 	fmt.Println(EBT, "ZAR")
 	fmt.Print("Your Profit is ")
 	fmt.Println(profit, "ZAR")
-	fmt.Print("Your Ratio is ")
+	fmt.Print("Your Profit Margin is ")
 	fmt.Println(ratio)
 }
