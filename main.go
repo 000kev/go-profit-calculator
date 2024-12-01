@@ -11,14 +11,22 @@ func main() {
 	fmt.Print("Enter your tax rate: ")
 	fmt.Scan(&tax)
 
-	EBT := revenue - expenses
-	profit := revenue - ( revenue * (tax/100))
-	ratio := EBT / profit
+	EBT, profit, ratio := calcProfit(revenue, expenses, tax)
+	display(EBT, profit, ratio)
+	
+}
 
+func calcProfit(revenue, expenses, tax float64) (EBT, profit, ratio float64) {
+	EBT = revenue - expenses
+	profit = revenue - ( revenue * (tax/100))
+	ratio = EBT / profit
+	return
+}
+
+func display(EBT, profit, ratio float64) {
 	fmt.Print("Your Earnings Before Tax (EBT) is ")
 	fmt.Println(EBT, "ZAR")
 	fmt.Print("Your Profit is ")
 	fmt.Println(profit, "ZAR")
-	fmt.Print("Your Profit Margin is ")
-	fmt.Println(ratio)
+	fmt.Printf("Your Profit Margin is %.3f\n", ratio)
 }
