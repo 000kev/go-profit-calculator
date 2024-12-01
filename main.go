@@ -1,10 +1,22 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"strconv"
+	"errors"
+)
 
 func main() {
-	var balance float64 = 1000
+	var balance, err = readBalance() // errors don't crash the app in Go but rather return empty byte strings by default '0'
 
+	if err != nil {
+		fmt.Println("Error")
+		fmt.Println(err)
+		fmt.Println("------------")
+		fmt.Println()
+		// you could also terminate execution by using return or using the panic() function
+	}
 	fmt.Println("Welcome to Go Bank!\nWhat woutld you like to do?")
 	fmt.Println("1. Check balance")
 	fmt.Println("2. Deposit money")
@@ -14,12 +26,40 @@ func main() {
 
 	// Go only has for loops and not while like other languages
 	// for i := 0; i <200; i++ {}  => finite loop
-	// infinite loop =>
+	// there are also conditional loops => for choice != 5 {}
+	// alternatively you can use switch statements
+	// break has a special meaning in Go whereby it breaks out of the entire switch statement
 	app(&balance)
 	fmt.Println("We hope to see you again!")
 }
 
+func readBalance() (float64, error) {
+	data, err := os.ReadFile("balance.txt") // underscore tells Go you're not using the other variable, namely error in this case
+	if err != nil {
+		return 1000, errors.New("failed to find balance file") // error handling
+	}
+
+	bal := string(data)
+	balance, err := strconv.ParseFloat(bal, 64)
+	if err != nil {
+		return 1000, errors.New("failed to parse stored value") // error handling
+	}
+	return balance, nil
+}
+
+
+func writeBalance(balance float64) {
+	bal := fmt.Sprint(balance)
+	os.WriteFile("balance.txt", []byte(bal), 0644) // 0644 is a way of defining read and write permission
+}
+
+func writeResults(ebt, profit, ratio float64) {
+	results := fmt.Sprintf("EBT: %.3f\nProfit: %.3f\nRatio: %.3f\n", ebt, profit, ratio)
+	os.WriteFile("results.txt", []byte(results), 0644)
+}
+
 func app(balance *float64) {
+	// infinite loop 
 	for {
 		var choice int
 		fmt.Print("Your choice: ")
@@ -39,6 +79,7 @@ func app(balance *float64) {
 			}
 			*balance += deposit
 			fmt.Printf("Your current balance is %.2f ZAR\n", *balance)
+			writeBalance(*balance)
 			fmt.Println()
 		} else if choice == 3 {
 			fmt.Print("Your withdrawal: ")
@@ -51,6 +92,7 @@ func app(balance *float64) {
 			}
 			*balance -= withdrawal
 			fmt.Printf("Your current balance is %.2f ZAR\n", *balance)
+			writeBalance(*balance)
 			fmt.Println()
 		} else if choice == 4 {
 			profit()
@@ -68,7 +110,7 @@ func profit() {
 	tax = getInput("Enter your tax rate: ")
 
 	EBT, profit, ratio := calcProfit(revenue, expenses, tax)
-
+	writeResults(EBT, profit, ratio)
 	display(EBT, profit, ratio)
 }
 
