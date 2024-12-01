@@ -4,16 +4,20 @@ import "fmt"
 
 func main() {
 	var revenue, expenses, tax float64
-	fmt.Print("Enter your revenue amount in ZAR: ")
-	fmt.Scan(&revenue)
-	fmt.Print("Enter your expense amount in ZAR: ")
-	fmt.Scan(&expenses)
-	fmt.Print("Enter your tax rate: ")
-	fmt.Scan(&tax)
+	revenue = getInput("Enter your revenue amount in ZAR: ")
+	expenses = getInput("Enter your expense amount in ZAR: ")
+	tax = getInput("Enter your tax rate: ")
 
 	EBT, profit, ratio := calcProfit(revenue, expenses, tax)
+
 	display(EBT, profit, ratio)
-	
+}
+
+func getInput(inputText string) float64 {
+	var input float64
+	fmt.Print(inputText)
+	fmt.Scan(&input)
+	return input
 }
 
 func calcProfit(revenue, expenses, tax float64) (EBT, profit, ratio float64) {
